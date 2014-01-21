@@ -24,16 +24,16 @@ Build Status
 
 |Pypi|
 
-Requirements
+Dependencies
 ------------
 
 -  watson-framework
 -  sqlalchemy
 
-Issues
+Installation
 ------
 
-N/A
+``pip install watson-db``
 
 Testing
 -------
