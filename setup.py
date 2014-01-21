@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from setuptools import setup, Command
+from setuptools import setup, Command, find_packages
 import watson.db
 
 
@@ -99,7 +99,7 @@ setup(
               'sqlalchemy',
               'database'],
 
-    packages=['watson', 'watson.db'],
+    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
 
     zip_safe=False,
