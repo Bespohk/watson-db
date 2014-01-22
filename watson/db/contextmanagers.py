@@ -16,7 +16,7 @@ def transaction_scope(session):
         class MyController(controllers.Rest):
 
             def GET(self):
-                with session(self.db):
+                with transaction_scope(self.db):
                     session.add(Model())
     """
     try:
