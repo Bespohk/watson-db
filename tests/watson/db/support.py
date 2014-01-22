@@ -44,7 +44,7 @@ Model = app.container.get('sqlalchemy_declarative_base')
 class Test(Model):
     __tablename__ = 'tests'
     id = Column(Integer, primary_key=True)
-    value = Column(String(255))
+    value = Column(String(255), nullable=False)
 
 engine = app.container.get('sqlalchemy_engine_default')
 Model.metadata.drop_all(engine)

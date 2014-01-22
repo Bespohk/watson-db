@@ -10,7 +10,7 @@ class TestPaginator(object):
     def test_create_paginator(self):
         paginator = utils.Pagination(session.query(Test))
         assert paginator
-        assert repr(paginator) == '<watson.db.utils.Pagination page:1 limit:20 total:5 pages:1>'
+        assert repr(paginator) == '<watson.db.utils.Pagination page:1 limit:20 total:6 pages:1>'
 
     def test_iter_pages(self):
         paginator = utils.Pagination(session.query(Test), page=2, limit=2)
