@@ -64,7 +64,7 @@ with open(os.path.join(path, 'requirements.txt')) as f:
 setup(
     name='watson-db',
     version=watson.db.__version__,
-    url='http://github.com/bespohk/watson-db',
+    url='http://github.com/watsonpy/watson-db',
     description='SqlAlchemy integration into Watson.',
     long_description=readme,
 

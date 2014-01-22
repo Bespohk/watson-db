@@ -44,10 +44,10 @@ Table of Contents
 
 .. include:: toc.rst.inc
 
-.. |Build Status| image:: https://api.travis-ci.org/Bespohk/watson-db.png?branch=master
-   :target: https://travis-ci.org/Bespohk/watson-db
-.. |Coverage Status| image:: https://coveralls.io/repos/bespohk/watson-db/badge.png
-   :target: https://coveralls.io/r/bespohk/watson-db
+.. |Build Status| image:: https://api.travis-ci.org/watsonpy/watson-db.png?branch=master
+   :target: https://travis-ci.org/watsonpy/watson-db
+.. |Coverage Status| image:: https://coveralls.io/repos/watsonpy/watson-db/badge.png
+   :target: https://coveralls.io/r/watsonpy/watson-db
 .. |Version| image:: https://pypip.in/v/watson-db/badge.png
    :target: https://pypi.python.org/pypi/watson-db/
 .. |Downloads| image:: https://pypip.in/d/watson-db/badge.png
