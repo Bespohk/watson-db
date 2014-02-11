@@ -1,4 +1,4 @@
 sphinxcontrib-napoleon
-watson-common >= 1.0.0
-watson-framework >= 1.0.0
+watson-common == 1.0.2
+watson-framework == 2.0.0
 sqlalchemy >= 0.9.1
