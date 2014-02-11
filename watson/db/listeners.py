@@ -25,15 +25,21 @@ class Init(ContainerAware):
             engine = 'sqlalchemy_engine_{0}'.format(session)
             engine_init_args = config.get('engine_options', {})
             engine_init_args['name_or_url'] = config['connection_string']
-            self.container.add(engine,
-                               item='watson.db.engine.make_engine',
-                               init=engine_init_args)
+            self.container.add_definition(
+                engine,
+                {
+                    'item': 'watson.db.engine.make_engine',
+                    'init': engine_init_args
+                })
             # Configure the session options and add it to the container
             session_init_args = config.get('session_options', {})
             session_init_args['bind'] = engine
-            self.container.add('sqlalchemy_session_{0}'.format(session),
-                               item='watson.db.session.Session',
-                               init=session_init_args)
+            self.container.add_definition(
+                'sqlalchemy_session_{0}'.format(session),
+                {
+                    'item': 'watson.db.session.Session',
+                    'init': session_init_args
+                })
         if ('watson.db.listeners.Complete',) not in app.config['events'].get(events.COMPLETE, {}):
             app.dispatcher.add(
                 events.COMPLETE,
