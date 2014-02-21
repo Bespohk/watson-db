@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def transaction_scope(session):
+def transaction_scope(session, should_close=False):
     """Provides a transactional scope for session calls.
 
     See:
@@ -26,4 +26,5 @@ def transaction_scope(session):
         session.rollback()
         raise
     finally:
-        session.close()
+        if should_close:
+            session.close()
