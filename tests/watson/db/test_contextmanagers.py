@@ -18,3 +18,8 @@ class TestSessionContextManager(object):
         with raises(Exception):
             with transaction_scope(db) as session:
                 session.add(Test())
+
+    def test_close_connection(self):
+        with transaction_scope(db, should_close=True) as session:
+            pass
+        assert not session._new

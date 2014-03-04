@@ -20,6 +20,21 @@ class TestListeners(object):
                 }
             })
 
+    def test_no_declarative_base(self):
+        app = applications.Http({
+            'db': {
+                'default': {
+                    'connection_string': 'sqlite:///:memory:'
+                }
+            },
+            'events': {
+                events.INIT: [
+                    ('watson.db.listeners.Init', 1, True)
+                ],
+            }
+        })
+        assert app.container.get('sqlalchemy_declarative_base')
+
     def test_complete(self):
         app = support.app
         app.dispatcher.trigger(types.Event('event.mvc.complete', target=app))
