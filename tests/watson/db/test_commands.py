@@ -7,6 +7,7 @@ from sqlalchemy import engine
 from sqlalchemy.orm import session
 from pytest import raises
 from tests.watson.db import support
+from watson.common.contextmanagers import suppress
 
 
 class TestAlembicConfig(object):
@@ -101,7 +102,8 @@ class TestMigrate(object):
     def test_init(self):
         path = ('tests', 'watson', 'db', 'migrations')
         os_path = os.path.join(*path)
-        shutil.rmtree(os_path)
+        with suppress(Exception):
+            shutil.rmtree(os_path)
         assert self.command.init()
         assert os.path.exists(os_path)
 
