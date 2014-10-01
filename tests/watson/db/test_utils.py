@@ -28,5 +28,5 @@ class TestPaginator(object):
             assert True is False
 
     def test_no_results(self):
-        with raises(exc.NoResultFound):
-            utils.Pagination(session.query(Test).filter(Test.value == 10), page=2)
+        paginator = utils.Pagination(session.query(Test).filter(Test.value == 10), page=2)
+        assert not paginator.has_next

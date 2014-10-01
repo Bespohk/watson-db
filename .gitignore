@@ -3,6 +3,7 @@
 *.sublime-project
 *.sublime-workspace
 tests/_coverage
+tests/watson/db/migrations/*
 docs/_build
 
 ### Python ###

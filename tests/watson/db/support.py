@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from wsgiref import util
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from watson.framework import applications, events
+from watson.db.models import _DeclarativeMeta
+from watson.db.services import Base
 
 
 def start_response(status_line, headers):
@@ -18,17 +21,20 @@ def sample_environ(**kwargs):
 # Initialize a sample application
 app = applications.Http({
     'db': {
-        'default': {
-            'connection_string': 'sqlite:///:memory:'
+        'connections': {
+            'default': {
+                'connection_string': 'sqlite:///:memory:'
+            }
+        },
+        'fixtures': {
+            'path': 'tests/watson/db/fixtures/',
+            'data': (
+                ('dummy', None),
+            )
         }
     },
     'dependencies': {
-        'definitions': {
-            'sqlalchemy_declarative_base': {
-                # bind to the instance of sqlalchemy_engine
-                'item': lambda container: declarative_base(name='Model')
-            },
-        }
+        'definitions': {}
     },
     'events': {
         events.INIT: [
@@ -38,24 +44,33 @@ app = applications.Http({
 })
 
 
-Model = app.container.get('sqlalchemy_declarative_base')
+Model = declarative_base(name='Model', metaclass=_DeclarativeMeta)
 
 
 class Test(Model):
-    __tablename__ = 'tests'
     id = Column(Integer, primary_key=True)
     value = Column(String(255), nullable=False)
 
-engine = app.container.get('sqlalchemy_engine_default')
-Model.metadata.drop_all(engine)
-Model.metadata.create_all(engine)
+    def __repr__(self):
+        return '<Test id:{} value:{}>'.format(self.id, self.value)
 
-session = app.container.get('sqlalchemy_session_default')
 
-# Add some roles
-session.add(Test(value=1))
-session.add(Test(value=2))
-session.add(Test(value=3))
-session.add(Test(value=4))
-session.add(Test(value=5))
-session.commit()
+def create_session_add_dummy_data():
+    engine = create_engine('sqlite:///:memory:')
+    session = Session(engine)
+    Model.metadata.drop_all(engine)
+    Model.metadata.create_all(engine)
+    session.add(Test(value=1))
+    session.add(Test(value=2))
+    session.add(Test(value=3))
+    session.add(Test(value=4))
+    session.add(Test(value=5))
+    session.commit()
+    return session
+
+
+session = create_session_add_dummy_data()
+
+
+class TestService(Base):
+    __model__ = Test

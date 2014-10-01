@@ -1,0 +1,8 @@
+[
+    {
+        "class": "tests.watson.db.support.Test",
+        "fields": {
+            "value": "Fixture"
+        }
+    }
+]

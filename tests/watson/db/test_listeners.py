@@ -23,8 +23,10 @@ class TestListeners(object):
     def test_no_declarative_base(self):
         app = applications.Http({
             'db': {
-                'default': {
-                    'connection_string': 'sqlite:///:memory:'
+                'connections': {
+                    'default': {
+                        'connection_string': 'sqlite:///:memory:'
+                    }
                 }
             },
             'events': {

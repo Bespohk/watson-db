@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy.ext.declarative import declarative_base
+from watson.console.command import find_commands_in_module
 from watson.di import ContainerAware
 from watson.framework import events
+from watson.db import commands
+from watson.db.meta import _DeclarativeMeta, NAME as DECLARATIVE_BASE_NAME
+from watson.db.session import NAME as SESSION_NAME
+from watson.db.engine import NAME as ENGINE_NAME
 
 
 class Init(ContainerAware):
@@ -13,16 +18,44 @@ class Init(ContainerAware):
     respectively.
     """
 
-    def __call__(self, event):
-        app = event.target
-        if 'db' not in app.config:
+    def _validate_config(self, config):
+        """Validates the config and sets some standard defaults.
+        """
+        if 'db' not in config:
             raise ValueError(
                 'No db has been configured in your application configuration.')
-        if 'sqlalchemy_declarative_base' not in app.config['dependencies']['definitions']:
-            self.container.add('sqlalchemy_declarative_base', declarative_base(name='Model'))
-        for session, config in app.config['db'].items():
+        default_fixtures = {
+            'path': '../data/db/fixtures',
+            'data': []
+        }
+        default_fixtures.update(config['db'].get('fixtures', {}))
+        config['db']['fixtures'] = default_fixtures
+        default_migrations = {
+            'path': '../data/db/alembic',
+            'use_twophase': False
+        }
+        default_migrations.update(config['db'].get('migrations', {}))
+        config['db']['migrations'] = default_migrations
+        for session, session_config in config['db']['connections'].items():
+            if not 'metadata' in session_config:
+                session_config['metadata'] = 'watson.db.models.Model'
+        if DECLARATIVE_BASE_NAME not in config['dependencies']['definitions']:
+            self.container.add(
+                DECLARATIVE_BASE_NAME,
+                declarative_base(name='Model', metaclass=_DeclarativeMeta))
+
+    def _load_default_commands(self, config):
+        """Load some existing
+        """
+        existing_commands = config.get('commands', [])
+        db_commands = find_commands_in_module(commands)
+        db_commands.extend(existing_commands)
+        config['commands'] = db_commands
+
+    def _create_engines_and_sessions(self, config):
+        for session, config in config['db']['connections'].items():
             # Configure the engine options and add it to the container
-            engine = 'sqlalchemy_engine_{0}'.format(session)
+            engine = ENGINE_NAME.format(session)
             engine_init_args = config.get('engine_options', {})
             engine_init_args['name_or_url'] = config['connection_string']
             self.container.add_definition(
@@ -35,12 +68,19 @@ class Init(ContainerAware):
             session_init_args = config.get('session_options', {})
             session_init_args['bind'] = engine
             self.container.add_definition(
-                'sqlalchemy_session_{0}'.format(session),
+                SESSION_NAME.format(session),
                 {
                     'item': 'watson.db.session.Session',
                     'init': session_init_args
                 })
-        if ('watson.db.listeners.Complete',) not in app.config['events'].get(events.COMPLETE, {}):
+
+    def __call__(self, event):
+        app = event.target
+        self._validate_config(app.config)
+        self._load_default_commands(app.config)
+        self._create_engines_and_sessions(app.config)
+        if ('watson.db.listeners.Complete',) not in app.config['events'].get(
+                events.COMPLETE, {}):
             app.dispatcher.add(
                 events.COMPLETE,
                 self.container.get('watson.db.listeners.Complete'),
@@ -58,7 +98,7 @@ class Complete(ContainerAware):
         if 'db' not in app.config:
             raise ValueError(
                 'No db has been configured in your application configuration.')  # pragma: no cover
-        for session, config in app.config['db'].items():
-            session_name = 'sqlalchemy_session_{0}'.format(session)
+        for session, config in app.config['db']['connections'].items():
+            session_name = SESSION_NAME.format(session)
             session = self.container.get(session_name)
             session.close()

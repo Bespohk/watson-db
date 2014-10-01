@@ -1,0 +1,9 @@
+2.0.0
+
+- Integration with Alembic for migrations
+- Ability to populate database with dummy data using fixtures
+- Removed requirement for __tablename__ on models, now taken from the class name if not supplied
+- Base service class to interact with SqlAlchemy
+- New db and db:migrate commands available to an applications console.py file
+- Bug fix for no results found on paginator
+- BC: db configuration in config.py now has 'connections', 'migrations', 'fixtures' as top level settings. Connection information should sit within 'connections'. See Usage docs for more information

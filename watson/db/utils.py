@@ -108,7 +108,7 @@ class Pagination(object):
             (self.page - 1) * self.limit).all()
         self.total = 1
         if not self.items and self.page != 1:
-            raise exc.NoResultFound('No results for pagination.')
+            self.total = 0
         if self.page == 1 and len(self.items) < self.limit:
             self.total = len(self.items)
         else:

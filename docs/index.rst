@@ -21,6 +21,7 @@ Dependencies
 
 -  watson-framework
 -  sqlalchemy
+-  alembic
 
 Installation
 ------
