@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy.ext.declarative import declarative_base
 from watson.console.command import find_commands_in_module
-from watson.di import ContainerAware
 from watson.framework import events
 from watson.db import commands
 from watson.db.meta import _DeclarativeMeta, NAME as DECLARATIVE_BASE_NAME

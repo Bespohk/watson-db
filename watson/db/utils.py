@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from sqlalchemy.orm import exc
 from watson.common import imports
+
+
+def _table_attr(obj, attr):
+    return '{}.{}'.format(obj.__tablename__, attr)
 
 
 class Pagination(object):
