@@ -44,7 +44,7 @@ class Init(object):
                 declarative_base(name='Model', metaclass=_DeclarativeMeta))
 
     def _load_default_commands(self, config):
-        """Load some existing
+        """Load default database commands and append to application config.
         """
         existing_commands = config.get('commands', [])
         db_commands = find_commands_in_module(commands)
