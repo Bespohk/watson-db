@@ -16,7 +16,7 @@ def test_populate():
 
 def test_populate_to_session():
     fixtures.populate(support.session, 'tests/watson/db/fixtures/dummy.json')
-    service = support.TestService(support.session)
-    fixture = service.first(value='Fixture')
+    repo = support.TestRepository(support.session)
+    fixture = repo.first(value='Fixture')
     assert fixture
-    service.delete(fixture)
+    repo.delete(fixture)

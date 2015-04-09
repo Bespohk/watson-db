@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from watson.framework import applications, events
 from watson.db.models import _DeclarativeMeta
-from watson.db.services import Base
+from watson.db.repositories import Base
 
 
 def start_response(status_line, headers):
@@ -72,5 +72,5 @@ def create_session_add_dummy_data():
 session = create_session_add_dummy_data()
 
 
-class TestService(Base):
+class TestRepository(Base):
     __model__ = Test
