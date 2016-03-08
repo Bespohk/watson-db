@@ -38,7 +38,11 @@ class Database(command.Base, BaseDatabaseCommand):
         for name, options in self.config['connections'].items():
             metadata = options['metadata']
             if isinstance(metadata, str):
-                metadata = imports.load_definition_from_string(metadata)
+                try:
+                    metadata = imports.load_definition_from_string(metadata)
+                except:
+                    raise ConsoleError(
+                        'Missing connection metadata for {}'.format(metadata))
             metadatas[name] = metadata
         return metadatas
 
