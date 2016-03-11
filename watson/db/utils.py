@@ -27,6 +27,8 @@ class Page(object):
         return '?{}'.format('&amp;'.join(parts))
 
     def append(self, **kwargs):
+        if 'page' in kwargs:
+            del kwargs['page']
         self._parts.update(**kwargs)
         return self
 

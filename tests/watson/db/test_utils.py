@@ -58,3 +58,11 @@ class TestPaginator(object):
         paginator.previous.append(test='test')
         prev_query = str(paginator.previous)
         assert 'page=1' in prev_query
+
+    def test_paginator_query_string_from_dict(self):
+        existing_get = {'page': 1, 'test': 'test'}
+        paginator = utils.Pagination(session.query(Test), page=2, limit=2)
+        paginator.next.append(**existing_get)
+        next_query = str(paginator.next)
+        assert 'test=test' in next_query
+        assert 'page=3' in next_query
