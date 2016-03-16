@@ -40,9 +40,10 @@ class Database(command.Base, BaseDatabaseCommand):
             if isinstance(metadata, str):
                 try:
                     metadata = imports.load_definition_from_string(metadata)
-                except:
+                except Exception as e:
                     raise ConsoleError(
-                        'Missing connection metadata for {}'.format(metadata))
+                        'Missing connection metadata for {} ({})'.format(
+                            metadata, e))
             metadatas[name] = metadata
         return metadatas
 
