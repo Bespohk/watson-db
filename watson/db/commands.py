@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import codecs
 import os
+import sys
 from alembic import command as alembic_command
 from alembic.config import Config as AlembicConfig
-from sqlalchemy import create_engine
+from sqlacodegen import codegen
+from sqlalchemy import create_engine, schema
 from watson.common import imports
 from watson.console import command, ConsoleError
 from watson.console.decorators import arg
@@ -105,12 +108,39 @@ class Database(command.Base, BaseDatabaseCommand):
 
         connections = self.connections
         for database, model_base in self.metadata.items():
-            self.write('Schema for "{}" from metadata {}...'.format(database, repr(model_base)))
+            self.write('Schema for "{}" from metadata {}...'.format(
+                database, repr(model_base)))
             self.write()
             _engine = create_engine(
                 connections[database], strategy='mock', executor=dump_sql)
             model_base.metadata.create_all(_engine, checkfirst=False)
         return True
+
+    @arg('outfile', action='store_true', default=False, optional=True)
+    @arg('tables', action='store_true', default=None, optional=True)
+    @arg('connection_string', optional=True)
+    def generate_models(self, connection_string=None, tables=None, outfile=None):
+        """Generate models from an existing database.
+
+        Args:
+            connection_string (string): The database to connect to
+            tables (string): Tables to process (comma-separated, default: all)
+            outfile (string): File to write output to (default: stdout)
+        """
+        tables = tables.split(',') if tables else None
+        outfile = codecs.open(outfile, 'w', encoding='utf-8') if outfile else sys.stdout
+        connections = self.connections
+        databases = {database: connections[database] for database, _ in self.metadata.items()}
+        if connection_string:
+            databases = {connection_string.split('/')[-1]: connection_string}
+        for database, connection in databases.items():
+            self.write('SqlAlchemy model classes for "{}"'.format(database))
+            self.write()
+            _engine = create_engine(connection)
+            metadata = schema.MetaData(_engine)
+            metadata.reflect(_engine, only=tables)
+            generator = codegen.CodeGenerator(metadata)
+            generator.render(outfile)
 
 
 class Migrate(command.Base, BaseDatabaseCommand):
