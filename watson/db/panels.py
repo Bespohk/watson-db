@@ -25,6 +25,10 @@ TEMPLATE = """<style>
             <td>{{ query['statement'] }}</td>
             <td>{{ query['parameters'] }}</td>
         </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No queries executed.</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
@@ -51,6 +55,7 @@ def after_cursor_execute(conn, cursor, statement,
 
 class Query(abc.Panel):
     title = 'Database'
+    icon = 'database'
 
     def __init__(self, config, renderer, application):
         super(Query, self).__init__(config, renderer, application)
