@@ -5,6 +5,7 @@
 tests/_coverage
 tests/watson/db/migrations/*
 docs/_build
+.cache/v/
 
 ### Python ###
 *.py[cod]
