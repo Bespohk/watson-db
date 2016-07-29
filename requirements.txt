@@ -1,4 +1,4 @@
-watson-framework >= 3.0.5
+watson-framework >= 3.3.1
 sqlalchemy >= 1.0.14
 alembic >= 0.8.6
 sqlacodegen >= 1.1.6

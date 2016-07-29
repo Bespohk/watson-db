@@ -33,6 +33,9 @@ class Init(object):
             'path': '../data/db/alembic',
             'use_twophase': False
         }
+        container.get('jinja2_renderer').add_package_loader(
+            'watson.db.debug', 'views')
+
         default_migrations.update(config['db'].get('migrations', {}))
         config['db']['migrations'] = default_migrations
         for session, session_config in config['db']['connections'].items():
