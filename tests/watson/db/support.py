@@ -40,6 +40,11 @@ app = applications.Http({
         events.INIT: [
             ('watson.db.listeners.Init', 1, True)
         ],
+    },
+    'routes': {
+        '/': {
+            'path': '/'
+        }
     }
 })
 
