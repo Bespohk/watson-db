@@ -26,9 +26,5 @@ Dependencies
    :target: https://travis-ci.org/watsonpy/watson-db
 .. |Coverage Status| image:: https://coveralls.io/repos/watsonpy/watson-db/badge.png
    :target: https://coveralls.io/r/watsonpy/watson-db
-.. |Version| image:: http://badge.kloud51.com/pypi/v/watson-db.png
-   :target: https://pypi.python.org/pypi/watson-db/
-.. |Downloads| image:: http://badge.kloud51.com/pypi/d/watson-db.png
-   :target: https://pypi.python.org/pypi/watson-db/
-.. |Licence| image:: http://badge.kloud51.com/pypi/license/watson-db.png
+.. |Version| image:: https://img.shields.io/pypi/v/watson-db.svg?maxAge=2592000
    :target: https://pypi.python.org/pypi/watson-db/
