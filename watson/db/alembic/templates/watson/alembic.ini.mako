@@ -1,7 +1,7 @@
 # a multi-database configuration.
 
 [alembic]
-# path to migration scripts
+# path to migration scripts, assumes cwd is the package of your project
 script_location = ${script_location}
 
 # template used to generate migration files

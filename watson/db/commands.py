@@ -169,14 +169,17 @@ class Migrate(command.Base, BaseDatabaseCommand):
     def alembic_config_file(self):
         return os.path.join(self.directory, 'alembic.ini')
 
-    def alembic_config(self, with_ini=True):
+    def alembic_config(self, with_ini=True, relative_script_location=True):
         self._check_migrations()
-        directory = os.path.abspath(self.config['migrations']['path'])
+        directory = self.config['migrations']['path']
         args = []
         if with_ini:
             args.append(self.alembic_config_file)
         config = Config(*args)
-        config.set_main_option('script_location', directory)
+        script_location = directory
+        if not relative_script_location:
+            script_location = os.path.abspath(directory)
+        config.set_main_option('script_location', script_location)
         config.set_main_option('databases', ', '.join(self.database_names))
         config.watson = {
             'config': self.config,
@@ -223,7 +226,7 @@ class Migrate(command.Base, BaseDatabaseCommand):
             autogenerate (bool): Populate revision script with andidate migration operatons, based on comparison of database to model
             message (string): Message string to use with 'revision'
         """
-        config = self.alembic_config()
+        config = self.alembic_config(relative_script_location=False)
         return alembic_command.revision(
             config, message, autogenerate=autogenerate, sql=sql)
 
