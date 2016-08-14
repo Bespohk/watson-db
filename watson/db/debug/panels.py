@@ -35,8 +35,6 @@ class Query(abc.Panel):
 
     def render(self):
         return self._render({'queries': data})
-        return self.renderer.env.from_string(TEMPLATE).render(
-            queries=data)
 
     def render_key_stat(self):
         return '{0} queries ({1:.2f}ms)'.format(
