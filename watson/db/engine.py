@@ -6,10 +6,7 @@ NAME = 'sqlalchemy_engine_{}'
 
 def make_engine(**kwargs):
     """Create a new engine for SqlAlchemy.
-
-    Remove the container argument that is sent through from the DI container.
     """
-    del kwargs['container']
     return create_engine(**kwargs)
 
 
