@@ -103,4 +103,4 @@ class Complete(object):
         for session, config in app.config['db']['connections'].items():
             session_name = SESSION_NAME.format(session)
             session = app.container.get(session_name)
-            session.close()
+            session.remove()
