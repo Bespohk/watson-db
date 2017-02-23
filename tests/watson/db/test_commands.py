@@ -4,7 +4,7 @@ import shutil
 from watson.console.runner import ConsoleError
 from watson.db import commands
 from sqlalchemy import engine
-from sqlalchemy.orm import session
+from sqlalchemy.orm.scoping import scoped_session
 from pytest import raises
 from tests.watson.db import support
 from watson.common.contextmanagers import suppress
@@ -39,7 +39,7 @@ class TestDatabase(object):
         assert isinstance(self.command.engines['default'], engine.Engine)
 
     def test_sessions(self):
-        assert isinstance(self.command.sessions['default'], session.Session)
+        assert isinstance(self.command.sessions['default'], scoped_session)
 
     def test_create_command(self):
         assert self.command.create(drop=False)

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import orm
 
 NAME = 'sqlalchemy_session_{}'
 
-Session = sessionmaker()
+
+def make_session(**kwargs):
+    return orm.scoped_session(orm.sessionmaker(**kwargs))

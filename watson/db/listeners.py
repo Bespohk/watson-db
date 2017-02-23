@@ -72,7 +72,7 @@ class Init(object):
             container.add_definition(
                 SESSION_NAME.format(session),
                 {
-                    'item': 'watson.db.session.Session',
+                    'item': 'watson.db.session.make_session',
                     'init': session_init_args
                 })
 
