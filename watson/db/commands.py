@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, schema
 from watson.common import imports
 from watson.console import command, ConsoleError
 from watson.console.decorators import arg
-from watson.db import engine, fixtures, session
+from watson.db import engine, fixtures
 from watson.di import ContainerAware
 
 
