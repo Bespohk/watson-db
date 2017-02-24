@@ -1,3 +1,9 @@
+2.6.1
+- Option to output to the stdout rather than files
+
+2.6.0
+- Generate fixtures from the database using `./console.py db generate_fixtures`
+
 2.5.0
 - use scoped_session instead of regular session
 

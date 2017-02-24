@@ -32,3 +32,13 @@ def populate(session, file_name):
                 total += 1
                 session.add(obj)
     return total
+
+
+def save(model, items, fixtures_config):
+    model_name = model.__name__.lower()
+    path = '{}/{}.json'.format(
+        fixtures_config['path'],
+        model_name)
+    with open(path, 'w') as file:
+        file.write(items)
+    return imports.get_qualified_name(model), path

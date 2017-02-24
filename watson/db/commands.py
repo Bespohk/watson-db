@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 import codecs
+import collections
+import enum
+import json
 import os
 import sys
+from datetime import datetime
+
 from alembic import command as alembic_command
 from alembic.config import Config as AlembicConfig
 from sqlacodegen import codegen
-from sqlalchemy import create_engine, schema
+from sqlalchemy import create_engine, inspect, schema
+from sqlalchemy.ext.declarative.clsregistry import _ModuleMarker
+
 from watson.common import imports
-from watson.console import command, ConsoleError
+from watson.console import ConsoleError, command
 from watson.console.decorators import arg
 from watson.db import engine, fixtures, session
 from watson.di import ContainerAware
@@ -39,15 +46,7 @@ class Database(command.Base, BaseDatabaseCommand):
     def metadata(self):
         metadatas = {}
         for name, options in self.config['connections'].items():
-            metadata = options['metadata']
-            if isinstance(metadata, str):
-                try:
-                    metadata = imports.load_definition_from_string(metadata)
-                except Exception as e:
-                    raise ConsoleError(
-                        'Missing connection metadata for {} ({})'.format(
-                            metadata, e))
-            metadatas[name] = metadata
+            metadatas[name] = self._load_metadata(options['metadata'])
         return metadatas
 
     @property
@@ -64,6 +63,15 @@ class Database(command.Base, BaseDatabaseCommand):
     @property
     def engines(self):
         return self._session_or_engine('engine')
+
+    def _load_metadata(self, metadata):
+        if isinstance(metadata, str):
+            try:
+                return imports.load_definition_from_string(metadata)
+            except Exception as e:
+                raise ConsoleError(
+                    'Missing connection metadata for {} ({})'.format(
+                        metadata, e))
 
     def _session_or_engine(self, type_):
         """Retrieves all the sessions or engines from the container.
@@ -99,6 +107,60 @@ class Database(command.Base, BaseDatabaseCommand):
             total, len(sessions)))
         return True
 
+    def _get_models_in_session(self, name, model):
+        results = []
+        if isinstance(model, _ModuleMarker):
+            return None
+        inst = inspect(model)
+        attr_names = [c_attr.key for c_attr in inst.mapper.column_attrs]
+        for obj in self.sessions[name].query(model):
+            fields = {}
+            new_obj = collections.OrderedDict()
+            new_obj['class'] = imports.get_qualified_name(model)
+            attr_names = [c_attr.key for c_attr in inst.mapper.column_attrs]
+            for column in attr_names:
+                value = getattr(obj, column)
+                if isinstance(value, enum.Enum):
+                    value = value.value
+                elif isinstance(value, datetime):
+                    value = str(value)
+                elif isinstance(value, bytes):
+                    value = value.decode('utf-8')
+                fields[column] = value
+            new_obj['fields'] = collections.OrderedDict(
+                sorted(fields.items(), key=lambda k: k[0]))
+            results.append(new_obj)
+        return results
+
+    @arg('models', optional=True)
+    @arg('output_to_stdout', default=False, optional=True)
+    def generate_fixtures(self, models, output_to_stdout):
+        """Generate fixture data in json format.
+
+        Args:
+            models (string): A comma separated list of models to output
+            output_to_stdout (boolean): Whether or not to output to the stdout
+        """
+        if models:
+            models = models.split(',')
+        for name, options in self.config['connections'].items():
+            metadata = self._load_metadata(options['metadata'])
+            for model in metadata._decl_class_registry.values():
+                model_name = imports.get_qualified_name(model)
+                if models and model_name not in models:
+                    continue
+                records = self._get_models_in_session(name, model)
+                if not records:
+                    continue
+                records = json.dumps(records, indent=4)
+                if output_to_stdout:
+                    self.write(records)
+                    return
+                model_name, path = fixtures.save(
+                    model, records, self.config['fixtures'])
+                self.write(
+                    'Created fixture for {} at {}'.format(model_name, path))
+
     @arg()
     def dump(self):
         """Print the Schema of the database.
@@ -120,7 +182,7 @@ class Database(command.Base, BaseDatabaseCommand):
     @arg('tables', action='store_true', default=None, optional=True)
     @arg('connection_string', optional=True)
     def generate_models(self, connection_string=None, tables=None, outfile=None):
-        """Generate models from an existing database.
+        """Generate models from an existing database schema.
 
         Args:
             connection_string (string): The database to connect to
