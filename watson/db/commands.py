@@ -155,11 +155,11 @@ class Database(command.Base, BaseDatabaseCommand):
                 records = json.dumps(records, indent=4)
                 if output_to_stdout:
                     self.write(records)
-                    return
-                model_name, path = fixtures.save(
-                    model, records, self.config['fixtures'])
-                self.write(
-                    'Created fixture for {} at {}'.format(model_name, path))
+                else:
+                    model_name, path = fixtures.save(
+                        model, records, self.config['fixtures'])
+                    self.write(
+                        'Created fixture for {} at {}'.format(model_name, path))
 
     @arg()
     def dump(self):
