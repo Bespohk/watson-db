@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from watson.common import imports
+from watson.common import imports, strings
 from watson.db.contextmanagers import transaction_scope
 
 
@@ -35,7 +35,8 @@ def populate(session, file_name):
 
 
 def save(model, items, fixtures_config):
-    model_name = model.__name__.lower()
+    model_name = strings.pluralize(
+        strings.snakecase(model.__name__))
     path = '{}/{}.json'.format(
         fixtures_config['path'],
         model_name)
