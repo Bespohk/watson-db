@@ -2,6 +2,21 @@
 import abc
 from watson.db.contextmanagers import transaction_scope
 
+class Criteria(metaclass=abc.ABCMeta):
+    """The base criteria class.
+    """
+    @abc.abstractmethod
+    def apply(self, query):
+        """Called by the repository on all criteria.
+
+        Args:
+            query: The SqlAlchemy query to be used
+
+        Returns:
+            An adjusted SqlAlchemy query
+        """
+        raise NotImplementedError('You must implement apply for this criteria')
+
 
 class Base(metaclass=abc.ABCMeta):
     """Provides common interactions with the SQLAlchemy session.
@@ -63,6 +78,38 @@ class Base(metaclass=abc.ABCMeta):
         return obj
 
     # Convenience methods
+
+    def find_by_criteria(self, *criterias):
+        """Find all models by a list of criterias.
+
+        Applies a list of criteria to the query.
+
+        Args:
+            criterias: A list of watson.db.repositories.Criteria objects
+
+        Returns:
+            The query to be iterated over
+        """
+        query = self.query
+        for criteria in criterias:
+            query = criteria.apply(query)
+        return query
+
+    def get_by_criteria(self, *criterias, raise_error=True):
+        """Find an individual model based on a list of criterias.
+
+        Args:
+            criterias: A list of watson.db.repositories.Criteria objects
+            raise_error: Whether or not a NotFoundError should be raised if
+                         the model cannot be found
+
+        Returns:
+            The query to be iterated over
+        """
+        result = self.find_by_criteria(*criterias).first()
+        if not result and raise_error:
+            raise Exception('No matching result found.')
+        return result
 
     def find(self, **kwargs):
         """Shorthand for the filter_by method.
