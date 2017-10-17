@@ -42,7 +42,7 @@ A full example configuration might look like this:
        'connections': {
             'default': {
                 'connection_string': 'sqlite:///../data/db/default.db',
-                'metadata': 'app.models.Base',
+                'metadata': 'app.models.Model',
                 'engine_options': {
                     'encoding': 'utf-8',
                     'echo': False,
