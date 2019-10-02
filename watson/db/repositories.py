@@ -2,6 +2,7 @@
 import abc
 from watson.db.contextmanagers import transaction_scope
 
+
 class Criteria(metaclass=abc.ABCMeta):
     """The base criteria class.
     """

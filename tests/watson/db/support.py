@@ -18,6 +18,7 @@ def sample_environ(**kwargs):
     environ.update(kwargs)
     return environ
 
+
 # Initialize a sample application
 app = applications.Http({
     'db': {
@@ -52,12 +53,12 @@ app = applications.Http({
 Model = declarative_base(name='Model', metaclass=_DeclarativeMeta)
 
 
-class Test(Model):
+class Obj(Model):
     id = Column(Integer, primary_key=True)
     value = Column(String(255), nullable=False)
 
     def __repr__(self):
-        return '<Test id:{} value:{}>'.format(self.id, self.value)
+        return '<Obj id:{} value:{}>'.format(self.id, self.value)
 
 
 def create_session_add_dummy_data():
@@ -65,11 +66,11 @@ def create_session_add_dummy_data():
     session = Session(engine)
     Model.metadata.drop_all(engine)
     Model.metadata.create_all(engine)
-    session.add(Test(value=1))
-    session.add(Test(value=2))
-    session.add(Test(value=3))
-    session.add(Test(value=4))
-    session.add(Test(value=5))
+    session.add(Obj(value=1))
+    session.add(Obj(value=2))
+    session.add(Obj(value=3))
+    session.add(Obj(value=4))
+    session.add(Obj(value=5))
     session.commit()
     return session
 
@@ -78,4 +79,4 @@ session = create_session_add_dummy_data()
 
 
 class TestRepository(Base):
-    __model__ = Test
+    __model__ = Obj

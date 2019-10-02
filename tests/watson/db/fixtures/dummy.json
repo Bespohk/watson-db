@@ -1,8 +1,8 @@
 [
-    {
-        "class": "tests.watson.db.support.Test",
-        "fields": {
-            "value": "Fixture"
-        }
+  {
+    "class": "tests.watson.db.support.Obj",
+    "fields": {
+      "value": "Fixture"
     }
+  }
 ]
