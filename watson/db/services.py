@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 # Deprecated
 
-from watson.db.repositories import *
+from watson.db.repositories import *  # noqa

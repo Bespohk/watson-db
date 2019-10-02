@@ -11,6 +11,6 @@ def modelmaker(name='Model', **kwargs):
 # Some standard defaults
 try:
     Model = Base.global_app.container.get(DECLARATIVE_BASE_NAME)
-except:
+except Exception:
     # Application is not instantiated
     Model = modelmaker()

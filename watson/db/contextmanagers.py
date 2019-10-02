@@ -22,7 +22,7 @@ def transaction_scope(session, should_close=False):
     try:
         yield session
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
     finally:

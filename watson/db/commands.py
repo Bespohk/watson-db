@@ -16,7 +16,7 @@ from sqlalchemy.ext.declarative.clsregistry import _ModuleMarker
 from watson.common import imports
 from watson.console import ConsoleError, command
 from watson.console.decorators import arg
-from watson.db import engine, fixtures, session
+from watson.db import engine, fixtures, session  # noqa
 from watson.di import ContainerAware
 
 

@@ -18,7 +18,7 @@ def after_cursor_execute(conn, cursor, statement,
                          parameters, context, executemany):
     total = time.time() - context._query_start_time  # pragma: no cover
     data.append({
-        'time': total*1000,
+        'time': total * 1000,
         'statement': statement,
         'parameters': parameters
     })  # pragma: no cover
